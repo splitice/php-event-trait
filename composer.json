@@ -4,7 +4,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "SplitIce\\EventTrait": "src/EventTrait"
+            "Splitice\\EventTrait": "src"
         }
     },
     "name": "splitice/event-trait",
