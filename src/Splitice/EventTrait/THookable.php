@@ -1,6 +1,8 @@
 <?php
 namespace Splitice\EventTrait;
 
+use X4B\DB\Port;
+
 trait THookable {
     private $actions = array();
 
