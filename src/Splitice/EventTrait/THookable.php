@@ -9,7 +9,9 @@ trait THookable {
     protected function hookInit(){
         $class = get_called_class();
         if(isset(self::$init_cache[$class])){
-            self::$init_cache[$class]();
+            $functor = self::$init_cache[$class];
+            if($functor !== null)
+                $functor();
             return;
         }
 
@@ -33,7 +35,8 @@ trait THookable {
         }
 
         self::$init_cache[$class] = $functor;
-        $functor();
+        if($functor !== null)
+            $functor();
     }
 
     function register_action($action, $functor){
