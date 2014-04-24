@@ -13,7 +13,7 @@ trait THookable {
         if(isset(self::$init_cache[$class])){
             $functor = self::$init_cache[$class];
             if($functor !== null)
-                $functor();
+                $functor($this);
             return;
         }
 
@@ -24,28 +24,29 @@ trait THookable {
             $method = '__'.$trait->getShortName().'__init';
             if(method_exists($t,$method)){
                 if($functor === null){
-                    $functor = function() use($t,$method){
+                    $functor = function($t) use($method){
                         $t->$method();
                     };
                 }else{
-                    $functor = function() use($t,$method){
+                    $functor_new = function($t) use($method, $functor){
                         $t->$method();
-                        $functor();
+                        $functor($t);
                     };
+                    $functor = $functor_new;
                 }
             }
         }
 
         self::$init_cache[$class] = $functor;
         if($functor !== null)
-            $functor();
+            $functor($this);
     }
 
     function register_action($action, $functor){
         if(isset($this->actions[$action])){
             $tocall = $functor;
             $chain = $this->actions[$action];
-
+            //echo var_dump($action, debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
             $functor = function($arg) use($tocall,$chain){
                 $tocall($arg);
                 $chain($arg);
