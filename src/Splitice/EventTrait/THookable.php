@@ -4,10 +4,16 @@ namespace Splitice\EventTrait;
 use X4B\DB\Port;
 
 trait THookable {
+    /**
+     * @var array
+     */
     private $actions = array();
 
     private static $init_cache = array();
 
+    /**
+     * Call this from the constructor of the class being hooked
+     */
     protected function hookInit(){
         $class = get_called_class();
         if(isset(self::$init_cache[$class])){
@@ -42,6 +48,12 @@ trait THookable {
             $functor($this);
     }
 
+    /**
+     * Register a $functor to be performed on a specific $action name
+     *
+     * @param $action
+     * @param callable $functor
+     */
     function register_action($action, $functor){
         if(isset($this->actions[$action])){
             $tocall = $functor;
@@ -59,6 +71,12 @@ trait THookable {
 
     }
 
+    /**
+     * Call a $action with $arg
+     *
+     * @param $action
+     * @param null $arg
+     */
     protected function call_action($action, $arg = null){
         if(isset($this->actions[$action])){
             $this->actions[$action]($arg);
