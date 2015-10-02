@@ -146,6 +146,19 @@ trait THookable {
     function register_filter($filter, $functor){
         if(isset($this->filters[$filter])){
             $tocall = $functor;
+            if(is_array($tocall) && count($tocall) == 2){
+                $a = $functor[0];
+                $b = $functor[1];
+                if(is_object($tocall[0])){
+                    $tocall = function(&$arg) use ($a,$b){
+                        return $a->$b($arg);
+                    };
+                }else{
+                    $tocall = function(&$arg) use ($a,$b){
+                        return $a::$b($arg);
+                    };
+                }
+            }
             $chain = $this->filters[$filter];
             $functor = function(&$arg) use($tocall,$chain){
                 if($tocall($arg) || $chain($arg)){
